@@ -9,19 +9,36 @@ return {
     "williamboman/mason-lspconfig.nvim",
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "tsserver", "gopls", "tailwindcss", "eslint" }
+        ensure_installed = { "lua_ls", "ts_ls", "gopls", "tailwindcss", "eslint", "clangd", "marksman" }
       })
     end
   },
   {
     "neovim/nvim-lspconfig",
+    dependencies = { "hrsh7th/nvim-cmp", "L3MON4D3/LuaSnip" }, -- Ensure cmp and luasnip are installed
     config = function()
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
       local lspconfig = require("lspconfig")
+      local cmp = require("cmp")
+      local cmp_select = { behavior = cmp.SelectBehavior.Select }
+
+      -- LSP Configurations
+      lspconfig.glsl_analyzer.setup({
+        capabilities = capabilities
+      })
+      lspconfig.marksman.setup({
+        capabilities = capabilities
+      })
+      lspconfig.gdscript.setup({
+        capabilities = capabilities
+      })
       lspconfig.lua_ls.setup({
         capabilities = capabilities
       })
-      lspconfig.tsserver.setup({
+      lspconfig.clangd.setup({
+        capabilities = capabilities
+      })
+      lspconfig.ts_ls.setup({
         capabilities = capabilities
       })
       lspconfig.gopls.setup({
@@ -30,6 +47,20 @@ return {
       lspconfig.tailwindcss.setup({
         capabilities = capabilities
       })
+      lspconfig.pyright.setup {
+        on_attach = on_attach,
+        settings = {
+          pyright = { autoImportCompletion = true },
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              diagnosticMode = 'openFilesOnly',
+              useLibraryCodeForTypes = true,
+              typeCheckingMode = 'off',
+            }
+          }
+        }
+      }
       lspconfig.eslint.setup({
         settings = {
           packageManager = 'npm'
@@ -41,20 +72,30 @@ return {
           })
         end,
       })
-      lspconfig.rust_analyzer.setup({
-        capabilities = capabilities,
-        filetypes = { "rust" },
-        settings = {
-          ['rust_analyzer'] = {
-            cargo = {
-              allFeatures = true,
-            }
-          }
-        }
-      })
+
+      -- GDScript-Specific Keymap
+      vim.keymap.set('n', '<leader>sg', function()
+        vim.fn.serverstart '127.0.0.1:6004'
+      end, { noremap = true })
+
+      -- General LSP Keymaps
       vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
       vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, {})
+
+      -- CMP Setup
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+          end,
+        },
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+        }, {
+          { name = 'buffer' },
+        })
+      })
     end
   }
 }
