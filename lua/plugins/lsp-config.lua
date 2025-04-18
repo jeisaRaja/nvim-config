@@ -23,6 +23,10 @@ return {
       local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
       -- LSP Configurations
+      
+      lspconfig.rust_analyzer.setup({
+        capabilities = capabilities
+      })
       lspconfig.glsl_analyzer.setup({
         capabilities = capabilities
       })
