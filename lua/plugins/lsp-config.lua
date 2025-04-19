@@ -23,7 +23,7 @@ return {
       local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
       -- LSP Configurations
-      
+
       lspconfig.rust_analyzer.setup({
         capabilities = capabilities
       })
@@ -76,6 +76,20 @@ return {
           })
         end,
       })
+
+      -- lspconfig.racket_langserver.setup({
+      --   cmd = { "racket", "-l", "racket-langserver" },              -- Runs racket-langserver via Racket
+      --   filetypes = { "racket" },                                   -- Only for Racket files
+      --   root_dir = lspconfig.util.root_pattern("main.rkt", ".git"), -- Finds the project root
+      --   capabilities = capabilities,
+      -- })
+
+      lspconfig.racket_langserver.setup {
+        cmd = { "racket", "-l", "racket-langserver" },               -- This is the command to start the language server
+        filetypes = { "racket" },                                    -- LSP should only be activated for Racket files
+        root_dir = lspconfig.util.root_pattern("raco.json", ".git"), -- Root directory of the project
+        capabilities = capabilities,
+      }
 
       -- GDScript-Specific Keymap
       vim.keymap.set('n', '<leader>sg', function()

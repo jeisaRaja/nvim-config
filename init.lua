@@ -12,6 +12,8 @@ vim.opt.clipboard:append("unnamedplus")
 vim.cmd("set timeoutlen=1000")
 vim.cmd("set ttimeoutlen=10")
 
+vim.cmd("autocmd BufRead,BufNewFile *.rkt set filetype=racket")
+
 vim.filetype.add({
   extension = {
     vert = "glsl",
