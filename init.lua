@@ -142,9 +142,6 @@ vim.keymap.set("n", "<localleader>RA", function()
 end, { desc = "run all cells of all languages", silent = true })
 
 
-
-
-
 function _G.set_terminal_keymaps()
   local opts = { buffer = 0 }
   vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
